@@ -1,5 +1,15 @@
 import streamlit as st
 import nltk
+import mtranslate
+import ssl
+
+try:
+    _create_unverified_https_context = ssl._create_unverified_context
+except AttributeError:
+    pass
+else:
+    ssl._create_default_https_context = _create_unverified_https_context
+
 
 nltk.download('punkt')
 nltk.download('averaged_perceptron_tagger')
@@ -25,7 +35,9 @@ text_input = st.text_area("Enter text here:")
 
 if st.button("Analyze Sentiment"):
     if text_input:
-        compound_score = TextSentimentAnalyzer.analyze_sentiment(text_input)
+        en_text = mtranslate.translate(from_language='ru', to_language='en', to_translate=text_input)
+
+        compound_score = TextSentimentAnalyzer.analyze_sentiment(en_text)
 
         if compound_score >= 0.05:
             st.write("Sentiment: Positive :smile:")
